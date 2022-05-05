@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import print_function
+
 __author__  = "Nan Hua"
 
 __license__ = "GPL"
@@ -29,12 +29,12 @@ __email__   = "nhua@usc.edu"
 import numpy as np
 import os.path
 import h5py
-import cPickle as pickle
-import matrix
-import utils
-import files
+import pickle as pickle
+from . import matrix
+from . import utils
+from . import files
 import copy
-import plots
+from . import plots
 
 class structuresummary(object):
     """
@@ -55,7 +55,7 @@ class structuresummary(object):
         if os.path.isdir(target):
             #the target is a valid population structure directory
             if usegrp==None:
-                raise RuntimeError, "group key is not specified!"
+                raise RuntimeError("group key is not specified!")
             firststr    = files.modelstructures(os.path.join(target,"copy0.hms"),[usegrp])
             self.idx    = firststr.idx
             self.genome = firststr.genome
@@ -82,7 +82,7 @@ class structuresummary(object):
             self.intraRestraints       = h5f['intraRestraints'][:]
             self.interRestraints       = h5f['interRestraints'][:]
         else:
-            raise RuntimeError, "Invalid filename or file directory!"
+            raise RuntimeError("Invalid filename or file directory!")
         #-
         return None
     #==============================reading
@@ -306,8 +306,8 @@ class structuresummary(object):
         Two 1-D array : mean radian position for all beads, and first array contains the inner bead in the diploid genome.
         """
         
-        rpA = self.getBeadRadialPosition(range(self.nbead),nucleusRadius)
-        rpB = self.getBeadRadialPosition(range(self.nbead,self.nbead*2),nucleusRadius)
+        rpA = self.getBeadRadialPosition(list(range(self.nbead)),nucleusRadius)
+        rpB = self.getBeadRadialPosition(list(range(self.nbead,self.nbead*2)),nucleusRadius)
         
         rp = np.array([rpA,rpB])
         rp.sort(axis=0) #sort 

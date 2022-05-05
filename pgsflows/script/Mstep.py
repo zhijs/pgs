@@ -25,18 +25,18 @@ __email__   = "nhua@usc.edu"
 #def main(probfile,lastfb,currentfb, output_file, useLastCoordinates=False,actdistfile=None)
 def main(input_config):
 
-	if not input_config.has_key('modeling_parameters') :
+	if 'modeling_parameters' not in input_config :
 			raise Exception('%s : Input config error, it does not have modeling_parameters' % os.path.name(__file__))
 	else :
-		if not input_config['modeling_parameters'].has_key('probMat') :
+		if 'probMat' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have probMat' % os.path.name(__file__))
-		if not input_config['modeling_parameters'].has_key('last_theta') :
+		if 'last_theta' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have last_theta' % os.path.name(__file__))
-		if not input_config['modeling_parameters'].has_key('theta') :
+		if 'theta' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have theta' % os.path.name(__file__))
-		if not input_config['modeling_parameters'].has_key('output_file') :
+		if 'output_file' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have output_file' % os.path.name(__file__))
-		if not input_config['modeling_parameters'].has_key('last_actDist') :
+		if 'last_actDist' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have last_actDist' % os.path.name(__file__))	
 	
 	probfile = str( input_config['modeling_parameters']['probMat'] )
@@ -44,11 +44,11 @@ def main(input_config):
 	currentfb = str( input_config['modeling_parameters']['theta'] )
 	
 	nucleusRadius = 5000.0
-	if input_config['modeling_parameters'].has_key('nucleus_radius') :
+	if 'nucleus_radius' in input_config['modeling_parameters'] :
 		nucleusRadius = float( input_config['modeling_parameters']['nucleus_radius'] )
 	
 	chromosomeOccupancy = 0.2
-	if input_config['modeling_parameters'].has_key('chr_occupancy') :
+	if 'chr_occupancy' in input_config['modeling_parameters'] :
 		chromosomeOccupancy = float( input_config['modeling_parameters']['chr_occupancy'] )
 	
 	output_file = str( input_config['modeling_parameters']['output_file'] )
@@ -89,27 +89,27 @@ def main(input_config):
 		newmodel.SimulatedAnnealing(50000,1000,nc=2,nstep=1000)
 		newmodel.mdstep_withChromosomeTerritory(500,2000)
 		score = newmodel.cgstep(1000)
-		newmodel.logger.debug(u"#of Intra restraints: %d #of Inter restraints: %d score: %.8f" %(totalIntra,totalInter,score))
-		print "#of Intra restraints: %d #of Inter restraints: %d score: %.8f" %(totalIntra,totalInter,score)
+		newmodel.logger.debug("#of Intra restraints: %d #of Inter restraints: %d score: %.8f" %(totalIntra,totalInter,score))
+		print("#of Intra restraints: %d #of Inter restraints: %d score: %.8f" %(totalIntra,totalInter,score))
 	else:
 		actdist = np.genfromtxt(actdistfile,usecols=(0,1,3),dtype=(int,int,float))
 		intraContactRestraints, interContactRestraints = newmodel.set_contactRestraints(actdist)
 		newmodel.updateScoringFunction()
 		newmodel.SimulatedAnnealing(8000000,50000,nc=5, nstep=1000) #try1
 		score = newmodel.cgstep(2000)
-		newmodel.logger.debug(u"score try1: %.8f" % (score))
-		print "score try1: %.8f" % (score)
+		newmodel.logger.debug("score try1: %.8f" % (score))
+		print("score try1: %.8f" % (score))
 		newmodel.SimulatedAnnealing(500000,5000,nc=8, nstep=1000) #try2
 		score = newmodel.cgstep(2000)
-		newmodel.logger.debug(u"score try2: %.8f" % (score))
-		print "score try2: %.8f" % (score)
+		newmodel.logger.debug("score try2: %.8f" % (score))
+		print("score try2: %.8f" % (score))
 		newmodel.SimulatedAnnealing(100000,1000,nc=5, nstep=1000) #try3
 		score = newmodel.cgstep(1000)
-		newmodel.logger.debug(u"#of Intra restraints: %d #of Inter restraints: %d score: %.8f" % (len(intraContactRestraints),len(interContactRestraints),score))
-		print "#of Intra restraints: %d #of Inter restraints: %d score: %.8f" % (len(intraContactRestraints),len(interContactRestraints),score)
+		newmodel.logger.debug("#of Intra restraints: %d #of Inter restraints: %d score: %.8f" % (len(intraContactRestraints),len(interContactRestraints),score))
+		print("#of Intra restraints: %d #of Inter restraints: %d score: %.8f" % (len(intraContactRestraints),len(interContactRestraints),score))
 		
-	newmodel.logger.debug(u"===========  Optimization Starts ==========")
-	print "===========  Optimization Starts =========="
+	newmodel.logger.debug("===========  Optimization Starts ==========")
+	print("===========  Optimization Starts ==========")
 	minscore = 10*newmodel.nbead
 	if not useLastCoordinates:
 		newmodel.updateScoringFunction()
@@ -123,8 +123,8 @@ def main(input_config):
 	newmodel.SimulatedAnnealing(10000,500,nc=4, nstep=1500)
 	newmodel.SimulatedAnnealing(5000,500,nc=5, nstep=2500)
 
-	newmodel.logger.debug(u"----- Relaxing Structure  -----")
-	print "----- Relaxing Structure  -----"
+	newmodel.logger.debug("----- Relaxing Structure  -----")
+	print("----- Relaxing Structure  -----")
 	temp, score = newmodel.SimulatedAnnealing_Scored(5000,700,nc=4, nstep=1500, lowscore=10)
 	if not useLastCoordinates:
 		newmodel.mdstep_withChromosomeTerritory(500,1500)
@@ -146,32 +146,32 @@ def main(input_config):
 		f.write(copyname)
 		f.close()
 
-	newmodel.logger.debug(u"Final score %.5f" %(score))
-	print "Final score %.5f" %(score)
-	newmodel.logger.debug(u"Total time spent is %.1fs" % (alab.utils.timespend(tstart)))
-	print "Total time spent is %.1fs" % (alab.utils.timespend(tstart))
-	newmodel.logger.debug(u"================================")
-	print "================================"
-	newmodel.logger.warning(u"Evaluating Contacts")
-	print "Evaluating Contacts"
-	newmodel.logger.warning(u"Consecutive Beads:")
-	print "Consecutive Beads:"
+	newmodel.logger.debug("Final score %.5f" %(score))
+	print("Final score %.5f" %(score))
+	newmodel.logger.debug("Total time spent is %.1fs" % (alab.utils.timespend(tstart)))
+	print("Total time spent is %.1fs" % (alab.utils.timespend(tstart)))
+	newmodel.logger.debug("================================")
+	print("================================")
+	newmodel.logger.warning("Evaluating Contacts")
+	print("Evaluating Contacts")
+	newmodel.logger.warning("Consecutive Beads:")
+	print("Consecutive Beads:")
 	total = newmodel.evaluateRestraints(newmodel.consecutiveBeadRestraints)
-	print "%d violations in total"%(total)
-	newmodel.logger.warning(u"%d violations in total"%(total))
-	newmodel.logger.warning(u"Contact Restraints:")
-	print "Contact Restraints:"
+	print("%d violations in total"%(total))
+	newmodel.logger.warning("%d violations in total"%(total))
+	newmodel.logger.warning("Contact Restraints:")
+	print("Contact Restraints:")
 	if useLastCoordinates:
 		total = 0
 		total += newmodel.evaluateRestraints(newmodel.intraContactRestraints)
 		total += newmodel.evaluateRestraints(newmodel.interContactRestraints)
-		print "%d violations in total"%(total)
-		newmodel.logger.warning(u"%d violations in total"%(total))
+		print("%d violations in total"%(total))
+		newmodel.logger.warning("%d violations in total"%(total))
 	else:
 		newmodel.evaluateRestraints(newmodel.fmaxRestraints)
 	newmodel.saveCoordinates(output_file, currentfb)
 	
-	print "Simulation Finished."
+	print("Simulation Finished.")
 	return 0
 
 #=======================/main entry/===================
@@ -192,7 +192,7 @@ if __name__ == "__main__":
 	#data = json.loads(args.input_config)
 	#main(data)
 	
-	print sys.argv[1]
+	print(sys.argv[1])
 	data = json.loads( sys.argv[1] )
 	main(data)
 	

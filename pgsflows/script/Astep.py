@@ -44,7 +44,7 @@ def readinCoordinates(copystart,copyend,lastfb,coor_shared,structdir,nstruct,nbe
 			xyz,r = alab.modeling.readCoordinates(structdir+'/copy'+str(i)+'.hms',lastfb)
 			modelcoor[i][:] = xyz
 		except RuntimeError:
-			print "Can't find result for copy %s , %s" %(str(i),lastfb)
+			print("Can't find result for copy %s , %s" %(str(i),lastfb))
 #--
 def existingPortion(v, rsum):
 	return sum(v<=rsum)*1.0/len(v)
@@ -100,24 +100,24 @@ def listener(queue,actFile):
 #def main(probfile,structdir,actFile,lastfb,currentfb,nstruct,pids,plastfile):
 def main(input_config):
 
-	if not input_config.has_key('modeling_parameters') :
+	if 'modeling_parameters' not in input_config :
 			raise Exception('%s : Input config error, it does not have modeling_parameters' % os.path.name(__file__))
 	else :
-		if not input_config['modeling_parameters'].has_key('probMat') :
+		if 'probMat' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have probMat' % os.path.name(__file__))
-		if not input_config['modeling_parameters'].has_key('struct_dir') :
+		if 'struct_dir' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have struct_dir' % os.path.name(__file__))
-		if not input_config['modeling_parameters'].has_key('actDist') :
+		if 'actDist' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have actDist' % os.path.name(__file__))
-		if not input_config['modeling_parameters'].has_key('last_theta') :
+		if 'last_theta' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have last_theta' % os.path.name(__file__))
-		if not input_config['modeling_parameters'].has_key('theta') :
+		if 'theta' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have theta' % os.path.name(__file__))
-		if not input_config['modeling_parameters'].has_key('num_of_structures') :
+		if 'num_of_structures' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have num_of_structures' % os.path.name(__file__))
-		if not input_config['modeling_parameters'].has_key('last_actDist') :
+		if 'last_actDist' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have last_actDist' % os.path.name(__file__))	
-		if not input_config['modeling_parameters'].has_key('pids') :
+		if 'pids' not in input_config['modeling_parameters'] :
 			raise Exception('%s : Input config error, it does not have pids' % os.path.name(__file__))	
 
 	probfile = str( input_config['modeling_parameters']['probMat'] )

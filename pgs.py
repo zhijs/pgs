@@ -69,24 +69,24 @@ class GeneratePopulationOfGenomeStructure(WorkflowRunner):
 			with open(self.input_config, 'r') as data_file: 
 				self.input_config = json.load(data_file)
 				
-		if not self.input_config.has_key('source_dir') :
+		if 'source_dir' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have source_dir key' % os.path.name(__file__))
 		
-		if not self.input_config.has_key('input') :
+		if 'input' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have input key' % os.path.name(__file__))
 		else :
-			if not self.input_config['input'].has_key('genome') :
+			if 'genome' not in self.input_config['input'] :
 				raise Exception('%s : Input config error, it does not have genome' % os.path.name(__file__))
-			if not self.input_config['input'].has_key('resolution') :
+			if 'resolution' not in self.input_config['input'] :
 				raise Exception('%s : Input config error, it does not have resolution' % os.path.name(__file__))
 				
-		if not self.input_config.has_key('modeling_parameters') :
+		if 'modeling_parameters' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have modeling_parameters key' % os.path.name(__file__))
 			
-		if not self.input_config.has_key('output_dir') :
+		if 'output_dir' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have output_dir key' % os.path.name(__file__))
 			
-		if not self.input_config.has_key('system') :
+		if 'system' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have system key' % os.path.name(__file__))
 										
 		###############################################################
@@ -102,19 +102,19 @@ class GeneratePopulationOfGenomeStructure(WorkflowRunner):
 		build_TAD_map_task = "build_TAD_map_task"
 		probMat = None
 		
-		if self.input_config['input'].has_key('raw_matrix_file') :
-			if not self.input_config['input'].has_key('TAD_file') :
+		if 'raw_matrix_file' in self.input_config['input'] :
+			if 'TAD_file' not in self.input_config['input'] :
 				raise Exception('%s : Input config error, it does not have TAD file' % os.path.name(__file__))
 			else :
 				self.addWorkflowTask(build_TAD_map_task, build_TAD_map_wf, dependencies=None)
 				probMat = '%s/probMat/probMat.hdf5.hmat' % build_task_config['output_dir']
-		elif self.input_config['input'].has_key('prob_matrix_file_txt') :
-			if not self.input_config['input'].has_key('TAD_file') :
+		elif 'prob_matrix_file_txt' in self.input_config['input'] :
+			if 'TAD_file' not in self.input_config['input'] :
 				raise Exception('%s : Input config error, it does not have TAD file' % os.path.name(__file__))
 			else :
 				self.addWorkflowTask(build_TAD_map_task, build_TAD_map_wf, dependencies=None)
 				probMat = '%s/probMat/probMat.hdf5.hmat' % build_task_config['output_dir']
-		elif self.input_config['input'].has_key('prob_matrix_file_hdf5') :
+		elif 'prob_matrix_file_hdf5' in self.input_config['input'] :
 			build_TAD_map_task = None
 			probMat = self.input_config['input']['prob_matrix_file_hdf5']
 		else :

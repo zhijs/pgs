@@ -19,7 +19,7 @@ try:
     problvl = sys.argv[3]
     outfile = sys.argv[4]
 except:
-    print usage
+    print(usage)
     sys.exit()
 
 ss = alab.structuresummary(hmsdir,problvl,nstruct,pid=10)

@@ -43,7 +43,7 @@ if __name__=='__main__':
 	##################################################
 	#summary
 	##################################################
-	print args.theta
+	print(args.theta)
 	s = structuresummary(target=args.struct_dir, usegrp=args.theta, nstruct=int(args.nstruct) )
 	    
 	##################################################
@@ -59,7 +59,7 @@ if __name__=='__main__':
 								"violation" : (s.totalViolations.mean()/s.totalRestraints.mean()) }
 				})
 	
-	if data.has_key("pLast") :
+	if "pLast" in data :
 		data.update( {"pLastActDist" : "from.%s.to.%s.actDist" % (data["pLast"], args.theta) })
 	else :
 		data.update( {"pLastActDist" : None})

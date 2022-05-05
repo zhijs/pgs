@@ -50,24 +50,24 @@ import time
 import traceback
 import random
 
-from pyflowConfig import siteConfig
+from .pyflowConfig import siteConfig
 
 moduleDir = os.path.abspath(os.path.dirname(__file__))
 
 
 # minimum python version
 #
-pyver = sys.version_info
-if pyver[0] != 2 or (pyver[0] == 2 and pyver[1] < 4) :
-	raise Exception("pyflow module has only been tested for python versions [2.4,3.0)")
+# pyver = sys.version_info
+# if pyver[0] != 2 or (pyver[0] == 2 and pyver[1] < 4) :
+# 	raise Exception("pyflow module has only been tested for python versions [2.4,3.0)")
 
-# problem python versions:
-#
-# Internal interpretor deadlock issue in python 2.7.2:
-# http://bugs.python.org/issue13817
-# ..is so bad that pyflow can partially, but not completely, work around it -- so issue a warning for this case.
-if pyver[0] == 2 and pyver[1] == 7 and pyver[2] == 2 :
-	raise Exception("Python interpreter errors in python 2.7.2 may cause a pyflow workflow hang or crash. Please use a different python version.")
+# # problem python versions:
+# #
+# # Internal interpretor deadlock issue in python 2.7.2:
+# # http://bugs.python.org/issue13817
+# # ..is so bad that pyflow can partially, but not completely, work around it -- so issue a warning for this case.
+# if pyver[0] == 2 and pyver[1] == 7 and pyver[2] == 2 :
+# 	raise Exception("Python interpreter errors in python 2.7.2 may cause a pyflow workflow hang or crash. Please use a different python version.")
 
 
 # The line below is a workaround for a python 2.4/2.5 bug in
@@ -85,7 +85,7 @@ subprocess._cleanup = lambda: None
 # 8Mb).
 #
 try:
-	threading.stack_size(min(256 * 1024, threading.stack_size))
+	threading.stack_size(min(256 * 1024, threading.stack_size()))
 except AttributeError:
 	# Assuming this means python version < 2.5
 	pass
@@ -196,16 +196,16 @@ def timeStrNow():
 
 def timeStrToTimeStamp(ts):
 	import calendar
-	d = datetime.datetime(*map(int, re.split(r'[^\d]', ts)[:-1]))
+	d = datetime.datetime(*list(map(int, re.split(r'[^\d]', ts)[:-1])))
 	return calendar.timegm(d.timetuple())
 
 
 
 def isInt(x) :
-	return isinstance(x, (int, long))
+	return isinstance(x, int)
 
 def isString(x):
-	return isinstance(x, basestring)
+	return isinstance(x, str)
 
 
 def isIterable(x):
@@ -415,7 +415,7 @@ def argToBool(x) :
 	class FalseStrings :
 		val = ("", "0", "false", "f", "no", "n", "off")
 
-	if isinstance(x, basestring) :
+	if isinstance(x, str) :
 		return (x.lower() not in FalseStrings.val)
 	return bool(x)
 
@@ -549,7 +549,7 @@ def stackDump(dumpfp):
 	for name in tnames : dumpfp.write("  %s\n" % (name))
 	dumpfp.write("\n")
 
-	for tid, stack in frames.items():
+	for tid, stack in list(frames.items()):
 		dumpfp.write("Thread: %d %s\n" % (tid, id2name.get(tid, "NAME_UNKNOWN")))
 		for filename, lineno, name, line in traceback.extract_stack(stack):
 			dumpfp.write('File: "%s", line %d, in %s\n' % (filename, lineno, name))
@@ -753,7 +753,7 @@ def writeDotScript(taskDotScriptFile,
 	"""
 	import inspect
 
-	dsfp = os.fdopen(os.open(taskDotScriptFile, os.O_WRONLY | os.O_CREAT, 0755), 'w')
+	dsfp = os.fdopen(os.open(taskDotScriptFile, os.O_WRONLY | os.O_CREAT, 0o755), 'w')
 
 	dsfp.write("""#!/usr/bin/env python
 #
@@ -854,7 +854,7 @@ class StoppableThread(threading.Thread):
 
 	def __init__(self, *args, **kw):
 		threading.Thread.__init__(self, *args, **kw)
-		self._stop = threading.Event()
+		self._stopper= threading.Event()
 
 	def stop(self):
 		"thread specific stop method, may be overridden to add async thread-specific kill behaviour"
@@ -866,7 +866,7 @@ class StoppableThread(threading.Thread):
 		StoppableThread._stopAll.set()
 
 	def stopped(self):
-		return (StoppableThread._stopAll.isSet() or self._stop.isSet())
+		return (StoppableThread._stopAll.isSet() or self._stopper.isSet())
 
 
 
@@ -1143,7 +1143,7 @@ class CommandTaskRunner(BaseTaskRunner) :
 				   'cmd' : cmd.cmd, 'isShellCmd' : (cmd.type == "str") }
 
 		argFile = os.path.join(self.tmpDir, "taskWrapperParameters.pickle")
-		pickle.dump(taskInfo, open(argFile, "w"))
+		pickle.dump(taskInfo, open(argFile, "wb"))
 
 		self.wrapperCmd = [self.taskWrapper, runid, taskStr, argFile]
 
@@ -1421,7 +1421,7 @@ class SGETaskRunner(CommandTaskRunner) :
 				qcall = QCaller(cmd,self.infoLog)
 				qcall.start()
 				qcall.join(maxQcallWait)
-				if not qcall.isAlive() : break
+				if not qcall.is_alive() : break
 				self.infoLog("Trial %i of sge command has timed out. Killing process for cmd '%s'" % ((i + 1), cmd))
 				qcall.killProc()
 				self.infoLog("Finished attempting to kill sge command")
@@ -1638,7 +1638,7 @@ class PBSTaskRunner(CommandTaskRunner) :
 				qcall = QCaller(cmd,self.infoLog)
 				qcall.start()
 				qcall.join(maxQcallWait)
-				if not qcall.isAlive() : break
+				if not qcall.is_alive() : break
 				self.infoLog("Trial %i of pbs command has timed out. Killing process for cmd '%s'" % ((i + 1), cmd))
 				qcall.killProc()
 				self.infoLog("Finished attempting to kill pbs command")
@@ -2123,11 +2123,11 @@ class TaskManager(StoppableThread) :
 		Node status accordingly:
 		"""
 		notrunning = set()
-		for task in self.runningTasks.keys() :
+		for task in list(self.runningTasks.keys()) :
 			if self.stopped() : break
 			trun = self.runningTasks[task]
 			if not task.runStatus.isComplete.isSet() :
-				if trun.isAlive() : continue
+				if trun.is_alive() : continue
 				# if not complete and thread is dead then we don't know what happened, very bad!:
 				task.errorstate = 1
 				task.errorMessage = "Thread: '%s', has stopped without a traceable cause" % (trun.getName())
@@ -2187,14 +2187,14 @@ class TaskManager(StoppableThread) :
 	@lockMethod
 	def stop(self) :
 		StoppableThread.stop(self)
-		for trun in self.runningTasks.values() :
+		for trun in list(self.runningTasks.values()) :
 			trun.stop()
 
 
 	@lockMethod
 	def _areTasksDead(self) :
-		for trun in self.runningTasks.values() :
-			if trun.isAlive(): return False
+		for trun in list(self.runningTasks.values()) :
+			if trun.is_alive(): return False
 		return True
 
 
@@ -2552,7 +2552,7 @@ class TaskDAG(object) :
 	@lockMethod
 	def isRunComplete(self) :
 		"returns true if run is complete and error free"
-		for node in self.labelMap.values():
+		for node in list(self.labelMap.values()):
 			if node.isIgnoreThis : continue
 			if not node.isComplete() :
 				return False
@@ -2951,9 +2951,9 @@ class WorkflowRunnerThreadSharedData(object) :
 				raise Exception("Invalid run mode memMb argument: %s. Value must be 'unlimited' or an integer no less than 1" % (param.memMb))
 
 		# verify/normalize input settings:
-		if param.mode not in RunMode.data.keys() :
+		if param.mode not in list(RunMode.data.keys()) :
 			raise Exception("Invalid mode argument '%s'. Accepted modes are {%s}." \
-							% (param.mode, ",".join(RunMode.data.keys())))
+							% (param.mode, ",".join(list(RunMode.data.keys()))))
 
 		if param.mode == "sge" :
 			# TODO not-portable to windows (but is this a moot point -- all of sge mode is non-portable, no?):
@@ -3516,7 +3516,7 @@ class WorkflowRunner(object) :
 			except KeyboardInterrupt:
 				msg = "Keyboard Interrupt, shutting down running tasks..."
 				self._killWorkflow(msg)
-			except DataDirException, e:
+			except DataDirException as e:
 				self._notify(e.msg,logState=LogState.ERROR)
 			except:
 				exceptionMessaging()
@@ -4082,7 +4082,7 @@ class WorkflowRunner(object) :
 
 		if len(labels) == 0 :
 			if namespace == "" :
-				if self._tdag.isRunExhausted() or (not self._tman.isAlive()) :
+				if self._tdag.isRunExhausted() or (not self._tman.is_alive()) :
 					if not self._tdag.isRunComplete() :
 						status.retval = 1
 				else:
@@ -4138,7 +4138,7 @@ class WorkflowRunner(object) :
 	@staticmethod
 	def _checkTaskLabel(label) :
 		# sanity check label:
-		if not isinstance(label, basestring) :
+		if not isinstance(label, str) :
 			raise Exception ("Task label is not a string")
 		if label == "" :
 			raise Exception ("Task label is empty")
@@ -4149,7 +4149,7 @@ class WorkflowRunner(object) :
 	def _startTaskManager(self) :
 		# start a new task manager if one isn't already running:
 		#
-		if (self._tman is not None) and (self._tman.isAlive()) : return
+		if (self._tman is not None) and (self._tman.is_alive()) : return
 		if not self._cdata().isTaskManagerException :
 			self._tman = TaskManager(self._cdata(), self._tdag)
 			self._tman.start()
@@ -4172,13 +4172,13 @@ class WorkflowRunner(object) :
 		# Try to shut down the task manager, all command-tasks,
 		# and all sub-workflow tasks.
 		#
-		if (self._tman is None) or (not self._tman.isAlive()) : return
+		if (self._tman is None) or (not self._tman.is_alive()) : return
 		StoppableThread.stopAll()
 		self._stopAllWorkflows()
 		self._tman.stop()
 		for _ in range(timeoutSec) :
 			time.sleep(1)
-			if not self._tman.isAlive() :
+			if not self._tman.is_alive() :
 				self._infoLog("Task shutdown complete")
 				return
 		self._infoLog("Task shutdown timed out")
@@ -4267,7 +4267,7 @@ class WorkflowRunner(object) :
 		# can't join() because that blocks SIGINT
 		ewaiter = ExpWaiter(1, 1.7, 15,runStatus.isComplete)
 		while True :
-			if not trun.isAlive() : break
+			if not trun.is_alive() : break
 			ewaiter.wait()
 
 		if not runStatus.isComplete.isSet() :
@@ -4402,7 +4402,7 @@ class WorkflowRunner(object) :
 		# taskError information in case this thread is ahead of the
 		# task manager.
 		if isForceTaskHarvest :
-			if (self._tman is not None) and (self._tman.isAlive()) :
+			if (self._tman is not None) and (self._tman.is_alive()) :
 				self._tman.harvestTasks()
 
 		if not self._cdata().isTaskError() : return []

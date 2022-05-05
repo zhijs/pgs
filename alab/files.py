@@ -29,7 +29,7 @@ import re
 import os
 import bisect
 import h5py
-import cPickle
+import pickle
 
 #====================================================================================
 class bedgraph(object):
@@ -49,7 +49,7 @@ class bedgraph(object):
         self.itr             = 0
         if not filename is None:
             if isinstance(filename,str):
-                from alabio import loadstream
+                from .alabio import loadstream
                 f = loadstream(filename)
                 readtable = np.genfromtxt(
                                     f,
@@ -93,7 +93,7 @@ class bedgraph(object):
         return num
   
     def _flush(self):
-        self.__sorted_keys = sorted(self.data.keys(),key=lambda x:self.genchrnum(x))
+        self.__sorted_keys = sorted(list(self.data.keys()),key=lambda x:self.genchrnum(x))
         
     def __repr__(self):
         represent = ''
@@ -112,7 +112,7 @@ class bedgraph(object):
         if key < 0:
             key += len(self)
         if key > len(self):
-            raise IndexError, "The index (%d) is out of range" % key
+            raise IndexError("The index (%d) is out of range" % key)
         for chrom in self.__sorted_keys:
             if key+1 - len(self.data[chrom]) > 0:
                 key = key - len(self.data[chrom])
@@ -120,7 +120,7 @@ class bedgraph(object):
                 return self.data[chrom][key]
       
     #++++++++++++++++++++++++++++++++++++++++++++
-    def next(self):
+    def __next__(self):
         if self.itr >= len(self):
             raise StopIteration
         self.itr += 1
@@ -167,7 +167,7 @@ class bedgraph(object):
 
             if start < 0: start += len(self)
             if stop < 0: stop += len(self)
-            if start > len(self) or stop > len(self) :  raise IndexError, "The index out of range"
+            if start > len(self) or stop > len(self) :  raise IndexError("The index out of range")
             records = []
             for i in range(start,stop,step):
                 records.append(self.__getonerec(i))
@@ -177,11 +177,11 @@ class bedgraph(object):
             """For case a['chr1',3000000:4000000], output average value"""
             chrom = key[0]
             if not chrom in self.data:
-                raise KeyError, "Key %s doesn't exist!" % chrom
+                raise KeyError("Key %s doesn't exist!" % chrom)
             try: 
                 query = key[1]
             except Exception:
-                raise TypeError, "Invalid argument type"
+                raise TypeError("Invalid argument type")
       
             assert isinstance(chrom,str)
             assert isinstance(query,slice)
@@ -206,7 +206,7 @@ class bedgraph(object):
     
             return value/(querystop-querystart)
         else:
-            raise TypeError, "Invalid argument type"
+            raise TypeError("Invalid argument type")
     
     #=========================================================
     def __setitem__(self,key,value):
@@ -216,7 +216,7 @@ class bedgraph(object):
         try: 
             query = key[1]
         except Exception:
-            raise TypeError, "Invalid argument type"
+            raise TypeError("Invalid argument type")
         assert isinstance(chrom,str)
         assert isinstance(query,slice)
     
@@ -284,7 +284,7 @@ class bedgraph(object):
                 for line in self.data[chrom]:
                     f.write(pattern % (chrom,line['start'],line['end'],line['flag'],line['value']))
         else:
-            raise TypeError, "Invalid argument type %s" % (bedtype)
+            raise TypeError("Invalid argument type %s" % (bedtype))
         f.close
 
 class modelgroup(object):
@@ -292,8 +292,8 @@ class modelgroup(object):
         try:
             self.xyz = grouphandler['xyz'][:]
             self.r   = grouphandler['r'][:]
-            self.log = cPickle.loads(grouphandler['log'].value)
-            self.pym = cPickle.loads(grouphandler['pym'].value)
+            self.log = pickle.loads(grouphandler['log'].value)
+            self.pym = pickle.loads(grouphandler['pym'].value)
         except Exception as ex:
             raise ex
         self.score  = float(re.findall('Final score (\d+.\d+)',self.log)[0])
@@ -336,7 +336,7 @@ class modelgroup(object):
         return 0
     #=
     def savepdb(self,filename):
-        import utils
+        from . import utils
         pymfile = open(filename,'w')
         pymfile.write(utils.convertPDB(self.xyz,self.r,self.idx))
         pymfile.flush()
@@ -358,16 +358,16 @@ class modelstructures(object):
     """
     def __init__(self,filename,usegrp):
         if not os.path.isfile(filename):
-            raise RuntimeError,"File %s doesn't exist!\n" % (filename)
+            raise RuntimeError("File %s doesn't exist!\n" % (filename))
         try:
             h5f = h5py.File(filename,'r')
         except:
-            raise RuntimeError, "Invalid filetype, hdf5 file is required!"
+            raise RuntimeError("Invalid filetype, hdf5 file is required!")
         try:
-            self.genome = cPickle.loads(h5f['genome'].value)
+            self.genome = pickle.loads(h5f['genome'].value)
             self.idx    = h5f['idx'][:]
         except:
-            raise RuntimeError, "Invalid file, genome or idx not found!"
+            raise RuntimeError("Invalid file, genome or idx not found!")
         
         self._structs = []
         self.grpnames = usegrp
@@ -375,7 +375,7 @@ class modelstructures(object):
             try:
                 grp = h5f[prefix]
             except:
-                raise RuntimeError, "Group name %s doesn't exist!"%(prefix)
+                raise RuntimeError("Group name %s doesn't exist!"%(prefix))
             mg = modelgroup(grp,self.genome,self.idx)
             self._structs.append(mg)
         #--
@@ -383,7 +383,7 @@ class modelstructures(object):
     def __len__(self):
         return len(self._structs)
     
-    def next(self):
+    def __next__(self):
         if self._itr >= len(self):
             raise StopIteration
         self._itr += 1

@@ -26,7 +26,8 @@ __email__   = "nhua@usc.edu"
 import numpy as np
 import os.path
 import subprocess
-from cStringIO import StringIO
+import platform
+from io import StringIO, BytesIO
 
 def loadstream(filename):
     """
@@ -34,13 +35,16 @@ def loadstream(filename):
     zipped file are automaticaly unzipped using stream
     """
     if not os.path.isfile(filename):
-        raise IOError,"File %s doesn't exist!\n" % (filename)
+        raise IOError("File %s doesn't exist!\n" % (filename))
     if os.path.splitext(filename)[1] == '.gz':
-        p = subprocess.Popen(["zcat", filename], stdout = subprocess.PIPE)
-        f = StringIO(p.communicate()[0])
+        if platform.system().lower() == 'darwin':
+            p = subprocess.Popen(["gunzip", "-c", filename], stdout = subprocess.PIPE)
+        else:
+            p = subprocess.Popen(["zcat", filename], stdout = subprocess.PIPE)
+        f = BytesIO(p.communicate()[0])
     elif os.path.splitext(filename)[1] == '.bz2':
         p = subprocess.Popen(["bzip2 -d", filename], stdout = subprocess.PIPE)
-        f = StringIO(p.communicate()[0])
+        f = BytesIO(p.communicate()[0])
     else:
         f = open(filename,'r')
     return f

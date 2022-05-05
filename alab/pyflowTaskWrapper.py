@@ -143,7 +143,8 @@ class StringBling(object) :
         """
         prefix = "[%s] [%s] [%s] [%s] " % (timeStrNow(), self.hostname, self.runid, taskStr)
         if msg[-1] == "\n" : msg = msg[:-1]
-        for line in msg.split("\n") :
+        
+        for line in (msg.split("\n") if isinstance(msg, str) else msg.decode().split("\n") ) :
             ofp.write(writeFilter(prefix + line + "\n"))
         hardFlush(ofp)
 
@@ -174,10 +175,10 @@ class StringBling(object) :
 def getParams(paramsFile) :
     import pickle
 
-    paramhash = pickle.load(open(paramsFile))
+    paramhash = pickle.load(open(paramsFile, 'rb'))
     class Params : pass
     params = Params()
-    for (k, v) in paramhash.items() : setattr(params, k, v)
+    for (k, v) in list(paramhash.items()) : setattr(params, k, v)
     return params
 
 
@@ -244,6 +245,7 @@ The parameter pickle file contains all of the task parameters required by the wr
     #
     for t in range(maxTrials) :
         try :
+            print('picklefile', picklefile)
             params = getParams(picklefile)
         except :
             if (t+1) == maxTrials :

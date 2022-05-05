@@ -32,7 +32,7 @@ import time
 import warnings
 import numpy as np
 from collections import namedtuple
-from alabio import loadstream
+from .alabio import loadstream
 
 #===========================================================================
 class genome(object):
@@ -46,8 +46,8 @@ class genome(object):
         if not 'X' in usechr: removepattern += 'X'
         if not 'Y' in usechr: removepattern += 'Y'
         if not 'M' in usechr: removepattern += 'M'
-        
-        self.info = np.delete(self.info,np.nonzero([re.search('chr['+removepattern+']',c) for c in self.info['chrom']]))
+        print('chrom------------hhhhhhhhhhhhhhhh', self.info['chrom'])
+        self.info = np.delete(self.info,np.nonzero([re.search('chr['+removepattern+']',c.decode()) for c in self.info['chrom']]))
     
     def bininfo(self,resolution):
         binSize    = [int(math.ceil(float(x)/resolution)) for x in self.info['length']]
@@ -146,7 +146,7 @@ def smoothSpikesInBlock(matrix,w=3,s=3,p=3,z=5):
         
     """
     row,column     = matrix.shape
-    print matrix.shape
+    print(matrix.shape)
     smoothedMatrix = np.copy(matrix)
     smoothedCounts = 0
     for i in range(row):
@@ -197,7 +197,7 @@ def centerOfMass(xyz,r):
     get center of mass of a list of particles, given xyz coordinates and radius
     """
     if len(xyz) != len(r):
-        raise RuntimeError, "Dimension not agree"
+        raise RuntimeError("Dimension not agree")
     mass = r**3
     return np.sum(xyz*mass,axis=0)/sum(mass)
 

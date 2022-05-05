@@ -44,7 +44,7 @@ class DefineDomainFlow(WorkflowRunner):
 			# args.append('--flag')
 
 		# self.addTask('task_id', ' '.join(args))
-		print "DefineDomainFlow"
+		print("DefineDomainFlow")
 		
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(usage=extend_pyflow_docstring(__doc__))

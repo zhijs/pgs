@@ -50,31 +50,31 @@ class AStepFlow(WorkflowRunner):
 			with open(self.input_config, 'r') as data_file: 
 				self.input_config = json.load(data_file)
 		
-		if not self.input_config.has_key('source_dir') :
+		if 'source_dir' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have source_dir' % os.path.name(__file__)) 	
 					
-		if not self.input_config.has_key('modeling_parameters') :
+		if 'modeling_parameters' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have modeling_parameters' % os.path.name(__file__))
 		else :
-			if not self.input_config['modeling_parameters'].has_key('probMat') :
+			if 'probMat' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have probMat' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('struct_dir') :
+			if 'struct_dir' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have structdir' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('actDist') :
+			if 'actDist' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have actDist' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('last_theta') :
+			if 'last_theta' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have last_theta' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('theta') :
+			if 'theta' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have theta' % os.path.name(__file__))	
-			if not self.input_config['modeling_parameters'].has_key('num_of_structures') :
+			if 'num_of_structures' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have num_of_structures' % os.path.name(__file__))
 		
-		if not self.input_config.has_key('system') :
+		if 'system' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have system ' % os.path.name(__file__))
 		else :
-			if not self.input_config['system'].has_key('max_core') :
+			if 'max_core' not in self.input_config['system'] :
 				raise Exception('%s : Input config error, it does not have max_core' % os.path.name(__file__))
-			if not self.input_config['system'].has_key('max_memMB') :
+			if 'max_memMB' not in self.input_config['system'] :
 				raise Exception('%s : Input config error, it does not have max_memMB' % os.path.name(__file__))
 		
 		astep_src = '%s/Astep.py' % self.input_config['source_dir']
@@ -108,7 +108,7 @@ class AStepFlow(WorkflowRunner):
 		#args = ['python',
 		#		'/panfs/cmb-panasas2/shanjun/project/Hi-C/modelingPipe/workflows/test/test_code.py']
 
-		python_path = Popen("which python", shell=True, stdout=PIPE).stdout.read().rstrip('\n')		
+		python_path = Popen("which python", shell=True, stdout=PIPE).stdout.read().decode().rstrip('\n')	
 		task_label = "Astep_flow"
 		self.addTask(label=task_label, command='%s %s \'%s\'' % (python_path, astep_src, json.dumps(task_config)), nCores=task_config['system']['max_core'], memMb=task_config['system']['max_memMB'], retryMax=3, retryWait=2, retryWindow=0, retryMode="all")
 		#self.addTask(label=task_label, command=' '.join(args), nCores=1, memMb=1500, retryMax=3, retryWait=2, retryWindow=0, retryMode="all")

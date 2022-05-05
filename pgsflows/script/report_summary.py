@@ -64,7 +64,7 @@ if __name__=='__main__':
 			with open(violation_file, 'r') as file:
 				data = json.load(file)
 	
-			if data.has_key( "pLast" ) : 
+			if "pLast" in data : 
 				last_theta = data["pLast"]
 			else :
 				raise Exception("Cannot find violation rate for last_theta")
@@ -139,7 +139,7 @@ if __name__=='__main__':
 	###################################################
 	call(["mkdir", "-p", "%s/radialPlot" % args.output_dir])
 	
-	rp = s.getBeadRadialPosition(beads=range(len(s.idx)*2))
+	rp = s.getBeadRadialPosition(beads=list(range(len(s.idx)*2)))
 	rp_mean = rp.mean(axis=1)
 	rp_hapmean = (rp_mean[:len(s.idx)]+rp_mean[len(s.idx):])/2
 	

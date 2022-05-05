@@ -24,7 +24,7 @@ m.removePoorRegions(cutoff=1)
 
 #identify Inter-chromosome contact outliers, run 100 iterations
 cutoff = m.identifyInterOutliersCutoff(N=100)
-print cutoff
+print(cutoff)
 
 #smooth inter-chromosome contact outliers using power law smoothing
 #default settings 

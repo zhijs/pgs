@@ -64,33 +64,33 @@ class BuildTADMapFlow(WorkflowRunner):
 			with open(self.input_config, 'r') as data_file: 
 				self.input_config = json.load(data_file)
 		
-		if not self.input_config.has_key('source_dir') :
+		if 'source_dir' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have source_dir' % os.path.name(__file__))		
 					
-		if not self.input_config.has_key('input') :
+		if 'input' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have input' % os.path.name(__file__))
 		else :
-			if not self.input_config['input'].has_key('TAD_file') :
+			if 'TAD_file' not in self.input_config['input'] :
 				raise Exception('%s : Input config error, it does not have TAD_file' % os.path.name(__file__))
 			#if not self.input_config['input'].has_key('contact_map_file') :
 			#	raise Exception('%s : Input config error, it does not have contact_map_file' % os.path.name(__file__))
 		
-		if not self.input_config.has_key('output_dir') :
+		if 'output_dir' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have output_dir' % os.path.name(__file__))
 				
-		if not self.input_config.has_key('modeling_parameters') :
+		if 'modeling_parameters' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have modeling_parameters' % os.path.name(__file__))
 			
 		#else :
 		#	if not self.input_config['modeling_parameters'].has_key('probMat') :
 		#		raise Exception('%s : Input config error, it does not have probMat' % os.path.name(__file__))
 		
-		if not self.input_config.has_key('system') :
+		if 'system' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have system ' % os.path.name(__file__))
 		else :
-			if not self.input_config['system'].has_key('default_core') :
+			if 'default_core' not in self.input_config['system'] :
 				raise Exception('%s : Input config error, it does not have default_core' % os.path.name(__file__))
-			if not self.input_config['system'].has_key('max_memMB') :
+			if 'max_memMB' not in self.input_config['system'] :
 				raise Exception('%s : Input config error, it does not have max_memMB' % os.path.name(__file__))
 				
 		
@@ -104,10 +104,10 @@ class BuildTADMapFlow(WorkflowRunner):
 		if Popen("mkdir -p %s/probMat" % self.input_config['output_dir'], stderr=PIPE, stdout=PIPE, shell=True).wait() :
 			raise Exception("Cannot create output_dir : %s/probMat" % self.input_config['output_dir'])
 		
-		python_path = Popen("which python", shell=True, stdout=PIPE).stdout.read().rstrip('\n')		
+		python_path = Popen("which python", shell=True, stdout=PIPE).stdout.read().decode().rstrip('\n')		
 				
 		matrixFile = None
-		if self.input_config['input'].has_key('raw_matrix_file') :
+		if 'raw_matrix_file' in self.input_config['input'] :
 			matrixFile = self.input_config['input']['raw_matrix_file']
 			source = '%s/buildTADMap.py' % self.input_config['source_dir']
 			
@@ -121,10 +121,10 @@ class BuildTADMapFlow(WorkflowRunner):
 				'--resolution % i' % resolution
 				]
 		
-		 	task_label = "buildTADMap_flow"
+			task_label = "buildTADMap_flow"
 			self.addTask(label=task_label, command=' '.join(args), nCores=nCores, memMb=memMb, retryMax=3, retryWait=2, retryWindow=0, retryMode="all")	
 			
-		elif self.input_config['input'].has_key('prob_matrix_file_txt') :
+		elif 'prob_matrix_file_txt' in self.input_config['input'] :
 			matrixFile = self.input_config['input']['prob_matrix_file_txt']
 			source = '%s/hdf5_converter.py' % self.input_config['source_dir']
 			
@@ -137,7 +137,7 @@ class BuildTADMapFlow(WorkflowRunner):
 				'--genome', genome
 				]
 		
-		 	task_label = "hdf5ConvertFlow"
+			task_label = "hdf5ConvertFlow"
 			self.addTask(label=task_label, command=' '.join(args), nCores=nCores, memMb=memMb, retryMax=3, retryWait=2, retryWindow=0, retryMode="all")	
 			
 		else :
@@ -145,7 +145,7 @@ class BuildTADMapFlow(WorkflowRunner):
 				
 			
 		
-		# python_path = Popen("which python", shell=True, stdout=PIPE).stdout.read().rstrip('\n')		
+		# python_path = Popen("which python", shell=True, stdout=PIPE).stdout.read().decode().rstrip('\n')	
 		# args = [
 			# python_path,
 			# source, 
@@ -181,7 +181,7 @@ class BuildTADMapFlow(WorkflowRunner):
 		# nCores = self.input_config['system']['default_core']
 		# memMb = self.input_config['system']['max_memMB']
 		
-		# python_path = Popen("which python", shell=True, stdout=PIPE).stdout.read().rstrip('\n')		
+		# python_path = Popen("which python", shell=True, stdout=PIPE).stdout.read().decode().rstrip('\n')	
 		# args = [
 			# python_path,
 			# source, 

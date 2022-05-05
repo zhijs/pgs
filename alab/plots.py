@@ -178,11 +178,11 @@ def plotmatrix(figurename,matrix,format='png',title=None,**kwargs):
     cmap     = kwargs.pop('cmap',cm.Reds)
     fig  = plt.figure()
     if 'ticklabels1' in kwargs:
-        plt.yticks(range(matrix.shape[0]))
+        plt.yticks(list(range(matrix.shape[0])))
         plt.gca().set_yticklabels(kwargs.pop('ticklabels1'))
         
     if 'ticklabels2' in kwargs:
-        plt.xticks(range(matrix.shape[1]))
+        plt.xticks(list(range(matrix.shape[1])))
         plt.gca().set_xticklabels(kwargs.pop('ticklabels2'))
     
     cax  = plt.imshow(np.clip(matrix, a_min=clip_min, a_max=clip_max),

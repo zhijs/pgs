@@ -17,7 +17,7 @@ try:
     problvl = sys.argv[2]
     outfile = sys.argv[3]
 except:
-    print usage
+    print(usage)
     sys.exit()
 
 hms = alab.modelstructures(hmsfile,[problvl])
@@ -26,4 +26,4 @@ if os.path.splitext(outfile)[1] == ".pym":
 elif os.path.splitext(outfile)[1] == ".pdb":
     hms[0].savepdb(outfile)
 else:
-    raise RuntimeError, "Output must be *.pym or *.pdb"
+    raise RuntimeError("Output must be *.pym or *.pdb")

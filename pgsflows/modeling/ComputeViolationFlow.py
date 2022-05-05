@@ -34,38 +34,38 @@ class ComputeViolationFlow(WorkflowRunner):
 			with open(self.input_config, 'r') as data_file: 
 				self.input_config = json.load(data_file)
 		
-		if not self.input_config.has_key('source_dir') :
+		if 'source_dir' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have source_dir ' % os.path.name(__file__))		
 			
-		if not self.input_config.has_key('input') :
+		if 'input' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have input' % os.path.name(__file__))
 		else :
-			if not self.input_config['input'].has_key('genome') :
+			if 'genome' not in self.input_config['input'] :
 				raise Exception('%s : Input config error, it does not have genome' % os.path.name(__file__))
-			if not self.input_config['input'].has_key('resolution') :
+			if 'resolution' not in self.input_config['input'] :
 				raise Exception('%s : Input config error, it does not have resolution' % os.path.name(__file__))
 					
-		if not self.input_config.has_key('modeling_parameters') :
+		if 'modeling_parameters' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have modeling_parameters' % os.path.name(__file__))
 		else :
-			if not self.input_config['modeling_parameters'].has_key('probMat') :
+			if 'probMat' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have probMat' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('num_of_structures') :
+			if 'num_of_structures' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have num_of_structures' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('theta') :
+			if 'theta' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have theta' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('struct_dir') :
+			if 'struct_dir' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have struct_dir' % os.path.name(__file__))
 			
-		if not self.input_config.has_key('output_dir') :
+		if 'output_dir' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have output_dir' % os.path.name(__file__))
 			
-		if not self.input_config.has_key('system') :
+		if 'system' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have system ' % os.path.name(__file__))
 		else :
-			if not self.input_config['system'].has_key('default_core') :
+			if 'default_core' not in self.input_config['system'] :
 				raise Exception('%s : Input config error, it does not have max_core' % os.path.name(__file__))
-			if not self.input_config['system'].has_key('max_memMB') :
+			if 'max_memMB' not in self.input_config['system'] :
 				raise Exception('%s : Input config error, it does not have max_memMB' % os.path.name(__file__))
 				
 		compute_violation_src = '%s/compute_violation.py' % self.input_config['source_dir']
@@ -79,7 +79,7 @@ class ComputeViolationFlow(WorkflowRunner):
 		genome = self.input_config['input']['genome']
 		resolution = self.input_config['input']['resolution']
 		
-		python_path = subprocess.Popen("which python", shell=True, stdout=subprocess.PIPE).stdout.read().rstrip('\n')		
+		python_path = subprocess.Popen("which python", shell=True, stdout=subprocess.PIPE).stdout.read().decode().rstrip('\n')		
 		args = [python_path,
 			compute_violation_src, 
 			'--struct_dir', struct_dir, 

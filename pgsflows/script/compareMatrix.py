@@ -7,7 +7,7 @@ cmd:
 ./compareMatrix.py Ke_tadmodel30.hdf5 Nan_tadmodel0.hdf5 0.05 "\$Model_{old}\$" "\$Model_{new}\$" modelComp.pdf
 
 """
-from __future__ import print_function
+
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np

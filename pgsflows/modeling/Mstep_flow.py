@@ -48,27 +48,27 @@ class MStepFlow(WorkflowRunner):
 			with open(self.input_config, 'r') as data_file: 
 				self.input_config = json.load(data_file)
 		
-		if not self.input_config.has_key('source_dir') :
+		if 'source_dir' not in self.input_config :
 			raise Exception('Input config error, it does not have source_dir ')		
 					
-		if not self.input_config.has_key('modeling_parameters') :
+		if 'modeling_parameters' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have modeling_parameters' % os.path.name(__file__))
 		else :
-			if not self.input_config['modeling_parameters'].has_key('probMat') :
+			if 'probMat' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have probMat' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('last_theta') :
+			if 'last_theta' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have last_theta' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('theta') :
+			if 'theta' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have theta' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('num_of_structures') :
+			if 'num_of_structures' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have num_of_structures' % os.path.name(__file__))
 				
-		if not self.input_config.has_key('system') :
+		if 'system' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have system ' % os.path.name(__file__))
 		else :
-			if not self.input_config['system'].has_key('default_core') :
+			if 'default_core' not in self.input_config['system'] :
 				raise Exception('%s : Input config error, it does not have max_core' % os.path.name(__file__))
-			if not self.input_config['system'].has_key('max_memMB') :
+			if 'max_memMB' not in self.input_config['system'] :
 				raise Exception('%s : Input config error, it does not have max_memMB' % os.path.name(__file__))
 			
 		mstep_src = '%s/Mstep.py' % self.input_config['source_dir']
@@ -80,7 +80,7 @@ class MStepFlow(WorkflowRunner):
 		task_list = ["%s%d" % ("copy", i) for i in range(nstruct)]
 		priority_list = [int(i/100) for i in range(nstruct)]
 		
-		python_path = Popen("which python", shell=True, stdout=PIPE).stdout.read().rstrip('\n')		
+		python_path = Popen("which python", shell=True, stdout=PIPE).stdout.read().decode().rstrip('\n')		
 		
 		for task, priority in zip(task_list, priority_list):
 			task_config = self.input_config

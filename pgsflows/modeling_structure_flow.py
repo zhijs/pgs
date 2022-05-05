@@ -37,9 +37,9 @@ from alab.args import add_pyflow_args
 from alab.args import default_pyflow_args
 from alab.args import extend_pyflow_docstring
 
-from modeling.Astep_flow import AStepFlow
-from modeling.Mstep_flow import MStepFlow
-from modeling.ComputeViolationFlow import ComputeViolationFlow
+from .modeling.Astep_flow import AStepFlow
+from .modeling.Mstep_flow import MStepFlow
+from .modeling.ComputeViolationFlow import ComputeViolationFlow
 
 #from workflows.utils.sys_utils import ensure_file_exists
 #from workflows.config import SiteConfig
@@ -72,21 +72,21 @@ class ModelingStructureFlow(WorkflowRunner):
 			with open(self.input_config, 'r') as data_file: 
 				self.input_config = json.load(data_file)
 		
-		if not self.input_config.has_key('source_dir') :
+		if 'source_dir' not in self.input_config :
 			raise Exception('Input config error, it does not have source_dir ')		
 					
-		if not self.input_config.has_key('modeling_parameters') :
+		if 'modeling_parameters' not in self.input_config :
 			raise Exception('%s : Input config error, it does not have modeling_parameters' % os.path.name(__file__))
 		else :
-			if not self.input_config['modeling_parameters'].has_key('probMat') :
+			if 'probMat' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have probMat' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('theta_list') :
+			if 'theta_list' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have theta_list' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('num_of_structures') :
+			if 'num_of_structures' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have num_of_structures' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('max_iter_per_theta') :
+			if 'max_iter_per_theta' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have max_iter_per_theta' % os.path.name(__file__))
-			if not self.input_config['modeling_parameters'].has_key('violation_cutoff') :
+			if 'violation_cutoff' not in self.input_config['modeling_parameters'] :
 				raise Exception('%s : Input config error, it does not have violation_cutoff' % os.path.name(__file__))
 				
 		input = self.input_config['modeling_parameters']['probMat']
@@ -128,8 +128,8 @@ class ModelingStructureFlow(WorkflowRunner):
 					with open(violation_file, 'r') as file:
 						data = json.load(file)
 						
-					if not data.has_key( newTheta ) :
-						if data.has_key( "pLast" ) : 
+					if newTheta not in data :
+						if "pLast" in data : 
 							last_theta = data["pLast"]				
 	
 					#if data.has_key( "pLast" ) :
@@ -208,7 +208,7 @@ class ModelingStructureFlow(WorkflowRunner):
 				if os.path.isfile( violation_file ) :
 					with open(violation_file, 'r') as file:
 						data = json.load(file)
-						if data.has_key( newTheta ) :
+						if newTheta in data :
 							violation_rate = data[ newTheta ]["violation"]
 						else :
 							raise Exception("Cannot find violation rate for current theta %s" % newTheta)
@@ -225,7 +225,7 @@ class ModelingStructureFlow(WorkflowRunner):
 				
 				iter_count = iter_count + 1
 			else :
-				print "Process Stopped "
+				print("Process Stopped ")
 				break
 		
 if __name__ == "__main__":

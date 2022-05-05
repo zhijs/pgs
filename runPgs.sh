@@ -1,0 +1,1 @@
+python /Users/zhiyang/workspace/chromse/pgs/pgs.py --input_config /Users/zhiyang/workspace/chromse/pgs/input_config.json --run_mode local --nCores 300 --memMb 800000 --pyflow_dir /Users/zhiyang/workspace/chromse/pgs/workspace
